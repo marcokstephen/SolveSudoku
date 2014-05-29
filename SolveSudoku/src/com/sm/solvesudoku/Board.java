@@ -3,7 +3,6 @@ package com.sm.solvesudoku;
 import java.util.ArrayList;
 import java.util.List;
 
-@SuppressWarnings("unchecked")
 public class Board{
 	private Square[] squarearray;
 	private List<List<Integer>> columns = new ArrayList<List<Integer>>();

@@ -16,9 +16,6 @@ public class Square{
 			return assigned;
 		}
 		
-		public Square(){
-		
-		}
 		public void setAssigned(boolean assigned) {
 			this.assigned = assigned;
 		}
