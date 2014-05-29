@@ -15,6 +15,10 @@ public class Square{
 		public boolean isAssigned() {
 			return assigned;
 		}
+		
+		public Square(){
+		
+		}
 		public void setAssigned(boolean assigned) {
 			this.assigned = assigned;
 		}
