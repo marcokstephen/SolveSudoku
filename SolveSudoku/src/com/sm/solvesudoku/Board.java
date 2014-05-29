@@ -1,31 +1,54 @@
 package com.sm.solvesudoku;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings("unchecked")
 public class Board{
 	private Square[] squarearray;
-	private List<Square>[] columns = new List[9];
-	private List<Square>[] groups = new List[9];
-	private List<Square>[] rows = new List[9];
+	private List<List<Integer>> columns = new ArrayList<List<Integer>>();
+	private List<List<Integer>> groups = new ArrayList<List<Integer>>();
+	private List<List<Integer>> rows = new ArrayList<List<Integer>>();
 
 	public Board(Square[] squarearray) {
 		super();
 		this.squarearray = squarearray;
-		List<Square>[] rows = new List[9];
-		List<Square>[] groups = new List[9];
-		List<Square>[] columns = new List[9];
+		List<List<Integer>> columns = new ArrayList<List<Integer>>();
+		List<List<Integer>> groups = new ArrayList<List<Integer>>();
+		List<List<Integer>> rows = new ArrayList<List<Integer>>();
 		
 		for (int i = 0; i < squarearray.length; i++){
 			Square tempsquare = squarearray[i];
+			int sqvalue = tempsquare.getValue();
 			int rowNumber = i/9;
-			rows[i].add(tempsquare);
+			if (rows.size() <= rowNumber){
+				List<Integer> rowList = new ArrayList<Integer>();
+				rowList.add(sqvalue);
+				rows.add(rowList);
+			} else {
+				List<Integer> rowList = rows.get(rowNumber);
+				rowList.add(sqvalue);
+			}
 			
 			int columnNumber = i%9;
-			columns[columnNumber].add(tempsquare);
+			if (columns.size() <= columnNumber){
+				List<Integer> columnList = new ArrayList<Integer>();
+				columnList.add(sqvalue);
+				columns.add(columnList);
+			} else {
+				List<Integer> columnList = columns.get(columnNumber);
+				columnList.add(sqvalue);
+			}
 			
 			int groupNumber = getGroupNumber(i);
-			groups[groupNumber].add(tempsquare);
+			if (groups.size() <= groupNumber){
+				List<Integer> groupList = new ArrayList<Integer>();
+				groupList.add(sqvalue);
+				groups.add(groupList);
+			} else {
+				List<Integer> groupList = groups.get(groupNumber);
+				groupList.add(sqvalue);
+			}
 		}
 		
 		this.groups = groups;
@@ -66,20 +89,26 @@ public class Board{
 	}
 
 
-	public List<Square>[] getColumns() {
+	public List<List<Integer>> getColumns() {
 		return columns;
 	}
+	public List<Integer> getColumns(int i){
+		return columns.get(i);
+	}
 
-
-	public List<Square>[] getGroups() {
+	public List<List<Integer>> getGroups() {
 		return groups;
 	}
-
-
-	public List<Square>[] getRows() {
-		return rows;
+	public List<Integer> getGroups(int i){
+		return groups.get(i);
 	}
 
+	public List<List<Integer>> getRows() {
+		return rows;
+	}
+	public List<Integer> getRows(int i){
+		return rows.get(i);
+	}
 
 	public Square[] getSquarearray() {
 		return squarearray;
