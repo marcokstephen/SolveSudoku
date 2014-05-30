@@ -86,6 +86,36 @@ public class Board{
 		}
 		return groupNumber;
 	}
+	
+	public static int groupPosnToIndex(int group, int posn){
+		int starting = 0;
+		if (group == 0){
+			
+		} else if (group == 1){
+			starting = 3;
+		} else if (group == 2){
+			starting = 6;
+		} else if (group == 3){
+			starting = 27;
+		} else if (group == 4){
+			starting = 30;
+		} else if (group == 5){
+			starting = 33;
+		} else if (group == 6){
+			starting = 54;
+		} else if (group == 7){
+			starting = 57;
+		} else if (group == 8){
+			starting = 60;
+		}
+		
+		int position = starting;
+		int column = posn%3;
+		int row = posn/3;
+		position = position + column + row*9;
+		
+		return position;
+	}
 
 
 	public List<List<Integer>> getColumns() {

@@ -29,17 +29,44 @@ public class Main {
 				break;
 			}
 		} //end while loop
-
-		int numChangedRowNumbers = 1;
-		while (numChangedRowNumbers != 0){
-			numChangedRowNumbers = checkUniqueRowNumbers(gameboard);
-			gameboard = refreshBoard(gameboard);
-		}
-		if (solved) {
-			printToString(gameboard);
-			System.exit(0);
-		}
-
+		
+		boolean changeOccurred = true;
+		while (changeOccurred){
+			changeOccurred = false;
+			int numChangedRowNumbers = -1;
+			while (numChangedRowNumbers != 0){
+				if (numChangedRowNumbers > 0) changeOccurred = true;
+				numChangedRowNumbers = checkUniqueRowNumbers(gameboard);
+				gameboard = refreshBoard(gameboard);
+			}
+			if (solved) {
+				printToString(gameboard);
+				System.exit(0);
+			}
+			
+			int numChangedColumnNumbers = -1;
+			while (numChangedColumnNumbers != 0){
+				if (numChangedColumnNumbers > 0) changeOccurred = true;
+				numChangedColumnNumbers = checkUniqueColumnNumbers(gameboard);
+				gameboard = refreshBoard(gameboard);
+			}
+			if (solved) {
+				printToString(gameboard);
+				System.exit(0);
+			}
+			
+			int numChangedGroupNumbers = -1;
+			while (numChangedGroupNumbers != 0){
+				if (numChangedGroupNumbers > 0) changeOccurred = true;
+				numChangedGroupNumbers = checkUniqueGroupNumbers(gameboard);
+				gameboard = refreshBoard(gameboard);
+			}
+			if (solved) {
+				printToString(gameboard);
+				System.exit(0);
+			}
+		}//end while
+		
 		if (!solved){
 			System.out.println("Cant do it...");
 			printToString(gameboard);
@@ -203,6 +230,40 @@ public class Main {
 					}
 				}
 			}//end if loop
+		}//end for loop
+		return numberSolvedThisRound;
+	}
+	
+	public static int checkUniqueGroupNumbers(Board gameboard){
+		Square[] squarearray = gameboard.getSquarearray();
+		int numberSolvedThisRound = 0;
+		
+		for (int i = 0; i < BOARDSIZE; i++){
+			Square temp = squarearray[i];
+			if (!temp.isAssigned()){
+				int groupNumber = Board.getGroupNumber(i);
+				List<Integer> groupList = gameboard.getGroups(groupNumber);
+				List<Integer> possibleList = temp.getPossible();
+				
+				List<Integer> joinedPossibleList = new ArrayList<Integer>();
+				for (int g = 0; g < 9; g++){
+					int index = Board.groupPosnToIndex(groupNumber, g);
+					if (groupList.get(g) == 0 && (i != index)){
+						joinedPossibleList.addAll(squarearray[index].getPossible());
+					}
+				}
+				for (int m = 0; m < possibleList.size(); m++){
+					if (!joinedPossibleList.contains(possibleList.get(m))){
+						//there is a unique value in the group!
+						int value = possibleList.get(m);
+						temp.setAssigned(true);
+						temp.setValue(value);
+						List<Integer> nullList = new ArrayList<Integer>();
+						temp.setPossible(nullList);
+						numberSolvedThisRound++;
+					}
+				}
+			}
 		}//end for loop
 		return numberSolvedThisRound;
 	}
