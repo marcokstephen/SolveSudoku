@@ -1,5 +1,9 @@
 package com.sm.solvesudoku;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,70 +11,71 @@ public class Main {
 	final static int BOARDSIZE = 81;
 	static boolean solved = false;
 
-	public static void main(String[] args){
-		//TESTCASES:
-		//String boardstring = "003020600900305001001806400008102900700000008006708200002609500800203009005010300"; //easy, can solve
-		//String boardstring = "200080300060070084030500209000105408000000000402706000301007040720040060004010003"; //can solve
-		//String boardstring = "001640803704580010000000500065217900002000400009354120007000000040025701108096300"; //can solve http://www.websudoku.com/?level=1&set_id=1684315439
-		//String boardstring = "409050803006070190000000400080001600200090008004700030003000000047080900902040305"; //medium puzzle, can solve
-		String boardstring = "001009000600807901020000008000250006010708030900016000300000060107602005000400700"; //hard puzzle
-		Board gameboard = create_board(boardstring);
-		int numberUnsolved = generatePossibleList(gameboard);
-		int testResult = 0;
-		while (testResult != numberUnsolved){
-			//this loop runs as long as the number of unsolved squares keeps decreasing
-			testResult = numberUnsolved;
-			gameboard = new Board(gameboard.getSquarearray());
-			numberUnsolved = refreshPossibleList(gameboard);
-			if (numberUnsolved == 0){
-				printToString(gameboard);
-				solved = true;
-				System.exit(0);
-				break;
-			}
-		} //end while loop
-		
-		boolean changeOccurred = true;
-		while (changeOccurred){
-			changeOccurred = false;
-			int numChangedRowNumbers = -1;
-			while (numChangedRowNumbers != 0){
-				if (numChangedRowNumbers > 0) changeOccurred = true;
-				numChangedRowNumbers = checkUniqueRowNumbers(gameboard);
-				gameboard = refreshBoard(gameboard);
-			}
-			if (solved) {
-				printToString(gameboard);
-				System.exit(0);
-			}
+	public static void main(String[] args) throws IOException{
+		BufferedReader br = new BufferedReader(new FileReader("D:/Users/Stephen/Desktop/sudoku.txt"));
+		String boardstring;
+		while ((boardstring = br.readLine()) != null){
+			solved = false;
+
+			Board gameboard = create_board(boardstring);
+			int numberUnsolved = generatePossibleList(gameboard);
+			int testResult = 0;
+			while (testResult != numberUnsolved){
+				//this loop runs as long as the number of unsolved squares keeps decreasing
+				testResult = numberUnsolved;
+				gameboard = new Board(gameboard.getSquarearray());
+				numberUnsolved = refreshPossibleList(gameboard);
+				if (numberUnsolved == 0){
+					printToString(gameboard);
+					solved = true;
+					break;
+				}
+			} //end while loop
 			
-			int numChangedColumnNumbers = -1;
-			while (numChangedColumnNumbers != 0){
-				if (numChangedColumnNumbers > 0) changeOccurred = true;
-				numChangedColumnNumbers = checkUniqueColumnNumbers(gameboard);
-				gameboard = refreshBoard(gameboard);
+			if (!solved){
+				boolean changeOccurred = true;
+				while (changeOccurred){
+					changeOccurred = false;
+					int numChangedRowNumbers = -1;
+					while (numChangedRowNumbers != 0){
+						if (numChangedRowNumbers > 0) changeOccurred = true;
+						numChangedRowNumbers = checkUniqueRowNumbers(gameboard);
+						gameboard = refreshBoard(gameboard);
+					}
+					if (solved) {
+						printToString(gameboard);
+						break;
+					}
+					
+					int numChangedColumnNumbers = -1;
+					while (numChangedColumnNumbers != 0){
+						if (numChangedColumnNumbers > 0) changeOccurred = true;
+						numChangedColumnNumbers = checkUniqueColumnNumbers(gameboard);
+						gameboard = refreshBoard(gameboard);
+					}
+					if (solved) {
+						printToString(gameboard);
+						break;
+					}
+					
+					int numChangedGroupNumbers = -1;
+					while (numChangedGroupNumbers != 0){
+						if (numChangedGroupNumbers > 0) changeOccurred = true;
+						numChangedGroupNumbers = checkUniqueGroupNumbers(gameboard);
+						gameboard = refreshBoard(gameboard);
+					}
+					if (solved) {
+						printToString(gameboard);
+						break;
+					}
+				}//end while
+				
+				if (!solved){
+					System.out.println(boardstring);
+				}
 			}
-			if (solved) {
-				printToString(gameboard);
-				System.exit(0);
-			}
-			
-			int numChangedGroupNumbers = -1;
-			while (numChangedGroupNumbers != 0){
-				if (numChangedGroupNumbers > 0) changeOccurred = true;
-				numChangedGroupNumbers = checkUniqueGroupNumbers(gameboard);
-				gameboard = refreshBoard(gameboard);
-			}
-			if (solved) {
-				printToString(gameboard);
-				System.exit(0);
-			}
-		}//end while
-		
-		if (!solved){
-			System.out.println("Cant do it...");
-			printToString(gameboard);
 		}
+		br.close();
 	}
 
 	public static Board refreshBoard(Board board){
@@ -271,16 +276,9 @@ public class Main {
 	public static void printToString(Board gameboard){
 		Square[] squarearray = gameboard.getSquarearray();
 		String output = "";
-		for (int i = 0; i < BOARDSIZE; i++){
-			output = output + " " + squarearray[i].getValue();
+		for (int i = 0; i < 3; i++){
+			output = output + squarearray[i].getValue();
 		}
-
-		int a = 0;
-		int b = 18;
-		for (int i = 0; i < 9; i++){
-			System.out.println(output.substring(a,b));
-			a += 18;
-			b += 18;
-		}
+		System.out.println(output);
 	}
 }
