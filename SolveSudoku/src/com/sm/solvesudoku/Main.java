@@ -26,11 +26,7 @@ public class Main {
 			}
 		} //end while loop
 		
-		boolean oneSolved = checkUniquePossibleNumbers(gameboard);
-		/*while (oneSolved){
-			gameboard = new Board(gameboard.getSquarearray());
-			oneSolved = checkUniquePossibleNumbers(gameboard);
-		}*/
+		checkUniquePossibleNumbers(gameboard);
 		
 		if (!solved){
 			System.err.println("Sorry, that one is too hard...");
@@ -123,62 +119,13 @@ public class Main {
 	
 	public static boolean checkUniquePossibleNumbers(Board gameboard){
 		Square[] squarearray = gameboard.getSquarearray();
-		boolean oneSolved = false;
+		
 		for (int i = 0; i < BOARDSIZE; i++){
 			Square temp = squarearray[i];
-			int groupNumber = Board.getGroupNumber(i);
-			int rowNumber = i/9;
-			int columnNumber = i%9;
-			List<Integer> group = gameboard.getGroups(groupNumber);
-			List<Integer> row = gameboard.getRows(rowNumber);
-			List<Integer> column = gameboard.getColumns(columnNumber);
-			List<Integer> possibleList = squarearray[i].getPossible();
-			
-			//first, check possibleList for row
-			List<Integer> joinedList = new ArrayList<Integer>();
-			for (int r = 0; r < 9; r++){
-				if (row.get(r) == 0 && (i != rowNumber*9+r)){
-					joinedList.addAll(squarearray[rowNumber*9+r].getPossible());
-				}
-			}
-			for (int m = 0; m < possibleList.size(); m++){
-				if (!joinedList.contains(possibleList.get(m))){
-					//There is a unique!!
-					int value = possibleList.get(m);
-					temp.setAssigned(true);
-					temp.setValue(value);
-					List<Integer> emptyList = new ArrayList<Integer>();
-					temp.setPossible(emptyList);
-					oneSolved = true;
-				}
-			}
-			//TODO: ensure that only one test is run at a time, or else there will be duplicates that appear
-			if (!oneSolved){
-				//second, check possibleList for column
-				joinedList = new ArrayList<Integer>();
-				for (int c = 0; c < 9; c++){
-					if (column.get(c) == 0 && (i != c*9+columnNumber)){
-						joinedList.addAll(squarearray[c*9+columnNumber].getPossible());
-					}
-				}
-				for (int m = 0; m < possibleList.size(); m++){
-					if (! joinedList.contains(possibleList.get(m))){
-						//There is a unique!!
-						int value = possibleList.get(m);
-						temp.setAssigned(true);
-						temp.setValue(value);
-						List<Integer> emptyList = new ArrayList<Integer>();
-						temp.setPossible(emptyList);
-						oneSolved = true;
-					}
-				}
-			}
-			
-			if (!oneSolved){
-				//third, check possibleList for groups
-			}
+			int rowNumber = 
 		}
-		return oneSolved;
+		
+		return true;
 	}
 	
 	public static void printToString(Board gameboard){
