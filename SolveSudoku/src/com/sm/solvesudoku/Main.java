@@ -10,7 +10,7 @@ public class Main {
 	public static void main(String[] args){
 		//String boardstring = "003020600900305001001806400008102900700000008006708200002609500800203009005010300"; //easy, can solve
 		//String boardstring = "200080300060070084030500209000105408000000000402706000301007040720040060004010003"; //cannot solve
-		String boardstring = "001640803704580010000000500065217900002000400009354120007000000040025701108096300";
+		String boardstring = "001640803704580010000000500065217900002000400009354120007000000040025701108096300"; //almost solved http://www.websudoku.com/?level=1&set_id=1684315439
 		Board gameboard = create_board(boardstring);
 		int numberUnsolved = generatePossibleList(gameboard);
 		int testResult = 0;
@@ -26,14 +26,11 @@ public class Main {
 			}
 		} //end while loop
 		
-		checkUniquePossibleNumbers(gameboard);
-		
-		/*System.out.println(gameboard.getSquarearray()[60].getPossible());
-		System.out.println(gameboard.getSquarearray()[61].getPossible());
-		System.out.println(gameboard.getSquarearray()[62].getPossible());
-		System.out.println(gameboard.getSquarearray()[70].getPossible());
-		System.out.println(gameboard.getSquarearray()[79].getPossible());
-		System.out.println(gameboard.getSquarearray()[80].getPossible());*/
+		boolean oneSolved = checkUniquePossibleNumbers(gameboard);
+		/*while (oneSolved){
+			gameboard = new Board(gameboard.getSquarearray());
+			oneSolved = checkUniquePossibleNumbers(gameboard);
+		}*/
 		
 		if (!solved){
 			System.err.println("Sorry, that one is too hard...");
@@ -124,7 +121,7 @@ public class Main {
 		return count;
 	}
 	
-	public static void checkUniquePossibleNumbers(Board gameboard){
+	public static boolean checkUniquePossibleNumbers(Board gameboard){
 		Square[] squarearray = gameboard.getSquarearray();
 		boolean oneSolved = false;
 		for (int i = 0; i < BOARDSIZE; i++){
@@ -181,6 +178,7 @@ public class Main {
 				//third, check possibleList for groups
 			}
 		}
+		return oneSolved;
 	}
 	
 	public static void printToString(Board gameboard){
