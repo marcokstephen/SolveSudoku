@@ -8,9 +8,10 @@ public class Main {
 	static boolean solved = false;
 	
 	public static void main(String[] args){
+		//TESTCASES:
 		//String boardstring = "003020600900305001001806400008102900700000008006708200002609500800203009005010300"; //easy, can solve
 		//String boardstring = "200080300060070084030500209000105408000000000402706000301007040720040060004010003"; //cannot solve
-		String boardstring = "001640803704580010000000500065217900002000400009354120007000000040025701108096300"; //almost solved http://www.websudoku.com/?level=1&set_id=1684315439
+		String boardstring = "001640803704580010000000500065217900002000400009354120007000000040025701108096300"; //can solve http://www.websudoku.com/?level=1&set_id=1684315439
 		Board gameboard = create_board(boardstring);
 		int numberUnsolved = generatePossibleList(gameboard);
 		int testResult = 0;
@@ -26,13 +27,25 @@ public class Main {
 			}
 		} //end while loop
 		
-		checkUniquePossibleNumbers(gameboard);
+		checkUniqueRowNumbers(gameboard);
+		gameboard = refreshBoard(gameboard);
+		checkUniqueRowNumbers(gameboard);
 		
 		if (!solved){
-			System.err.println("Sorry, that one is too hard...");
+			System.out.println("Cant do it...");
 			printToString(gameboard);
 		}
 		
+	}
+	
+	public static Board refreshBoard(Board board){
+		int numberChanged = 1;
+		board = new Board(board.getSquarearray());
+		while (numberChanged != 0){
+			numberChanged = refreshPossibleList(board);
+			board = new Board(board.getSquarearray());
+		}
+		return board;
 	}
 	
 	public static Board create_board(String boardstring){
@@ -117,15 +130,70 @@ public class Main {
 		return count;
 	}
 	
-	public static boolean checkUniquePossibleNumbers(Board gameboard){
+	public static int checkUniqueRowNumbers(Board gameboard){
 		Square[] squarearray = gameboard.getSquarearray();
+		int numberSolvedThisRound = 0;
 		
 		for (int i = 0; i < BOARDSIZE; i++){
 			Square temp = squarearray[i];
-			int rowNumber = 
-		}
+			if (!temp.isAssigned()){
+				int rowNumber = i/9;
+				List<Integer> rowList = gameboard.getRows(rowNumber);
+				List<Integer> possibleList = temp.getPossible();
+				
+				List<Integer> joinedPossibleList = new ArrayList<Integer>();
+				for (int r = 0; r < 9; r++){
+					if (rowList.get(r) == 0 && (i != rowNumber*9+r)){
+						joinedPossibleList.addAll(squarearray[rowNumber*9+r].getPossible());
+					}
+				}
+				for (int m = 0; m < possibleList.size(); m++){
+					if (!joinedPossibleList.contains(possibleList.get(m))){
+						//there is a unique value in the row!
+						int value = possibleList.get(m);
+						temp.setAssigned(true);
+						temp.setValue(value);
+						List<Integer> nullList = new ArrayList<Integer>();
+						temp.setPossible(nullList);
+						numberSolvedThisRound++;
+					}
+				}
+			} //end if stating that we only check non-assigned squares
+		} //end for loop
+		return numberSolvedThisRound++;
+	}
+	
+	public static int checkUniqueColumnNumbers(Board gameboard){
+		Square[] squarearray = gameboard.getSquarearray();
+		int numberSolvedThisRound = 0;
 		
-		return true;
+		for (int i = 0; i < BOARDSIZE; i++){
+			Square temp = squarearray[i];
+			if (!temp.isAssigned()){
+				int columnNumber = i%9;
+				List<Integer> columnList = gameboard.getColumns(columnNumber);
+				List<Integer> possibleList = temp.getPossible();
+				
+				List<Integer> joinedPossibleList = new ArrayList<Integer>();
+				for (int c = 0; c < 9; c++){
+					if (columnList.get(c) == 0 && (i != c*9+columnNumber)){
+						joinedPossibleList.addAll(squarearray[c*9+columnNumber].getPossible());
+					}
+				}
+				for (int m = 0; m < possibleList.size(); m++){
+					if (!joinedPossibleList.contains(possibleList.get(m))){
+						//there is a unique value in the column!
+						int value = possibleList.get(m);
+						temp.setAssigned(true);
+						temp.setValue(value);
+						List<Integer> nullList = new ArrayList<Integer>();
+						temp.setPossible(nullList);
+						numberSolvedThisRound++;
+					}
+				}
+			}//end if loop
+		}//end for loop
+		return numberSolvedThisRound;
 	}
 	
 	public static void printToString(Board gameboard){
