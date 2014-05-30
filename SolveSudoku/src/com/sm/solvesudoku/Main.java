@@ -164,7 +164,7 @@ public class Main {
 				}
 			} //end if stating that we only check non-assigned squares
 		} //end for loop
-		return numberSolvedThisRound++;
+		return numberSolvedThisRound;
 	}
 
 	public static int checkUniqueColumnNumbers(Board gameboard){
