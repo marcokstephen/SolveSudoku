@@ -5,48 +5,47 @@ import java.util.List;
 
 public class Board{
 	private Square[] squarearray;
-	private List<List<Integer>> columns = new ArrayList<List<Integer>>();
-	private List<List<Integer>> groups = new ArrayList<List<Integer>>();
-	private List<List<Integer>> rows = new ArrayList<List<Integer>>();
+	private List<List<Square>> columns = new ArrayList<List<Square>>();
+	private List<List<Square>> groups = new ArrayList<List<Square>>();
+	private List<List<Square>> rows = new ArrayList<List<Square>>();
 
 	public Board(Square[] squarearray) {
 		super();
 		this.squarearray = squarearray;
-		List<List<Integer>> columns = new ArrayList<List<Integer>>();
-		List<List<Integer>> groups = new ArrayList<List<Integer>>();
-		List<List<Integer>> rows = new ArrayList<List<Integer>>();
+		List<List<Square>> columns = new ArrayList<List<Square>>();
+		List<List<Square>> groups = new ArrayList<List<Square>>();
+		List<List<Square>> rows = new ArrayList<List<Square>>();
 		
 		for (int i = 0; i < squarearray.length; i++){
 			Square tempsquare = squarearray[i];
-			int sqvalue = tempsquare.getValue();
 			int rowNumber = i/9;
 			if (rows.size() <= rowNumber){
-				List<Integer> rowList = new ArrayList<Integer>();
-				rowList.add(sqvalue);
+				List<Square> rowList = new ArrayList<Square>();
+				rowList.add(tempsquare);
 				rows.add(rowList);
 			} else {
-				List<Integer> rowList = rows.get(rowNumber);
-				rowList.add(sqvalue);
+				List<Square> rowList = rows.get(rowNumber);
+				rowList.add(tempsquare);
 			}
 			
 			int columnNumber = i%9;
 			if (columns.size() <= columnNumber){
-				List<Integer> columnList = new ArrayList<Integer>();
-				columnList.add(sqvalue);
+				List<Square> columnList = new ArrayList<Square>();
+				columnList.add(tempsquare);
 				columns.add(columnList);
 			} else {
-				List<Integer> columnList = columns.get(columnNumber);
-				columnList.add(sqvalue);
+				List<Square> columnList = columns.get(columnNumber);
+				columnList.add(tempsquare);
 			}
 			
 			int groupNumber = getGroupNumber(i);
 			if (groups.size() <= groupNumber){
-				List<Integer> groupList = new ArrayList<Integer>();
-				groupList.add(sqvalue);
+				List<Square> groupList = new ArrayList<Square>();
+				groupList.add(tempsquare);
 				groups.add(groupList);
 			} else {
-				List<Integer> groupList = groups.get(groupNumber);
-				groupList.add(sqvalue);
+				List<Square> groupList = groups.get(groupNumber);
+				groupList.add(tempsquare);
 			}
 		}
 		
@@ -118,24 +117,24 @@ public class Board{
 	}
 
 
-	public List<List<Integer>> getColumns() {
+	public List<List<Square>> getColumns() {
 		return columns;
 	}
-	public List<Integer> getColumns(int i){
+	public List<Square> getColumns(int i){
 		return columns.get(i);
 	}
 
-	public List<List<Integer>> getGroups() {
+	public List<List<Square>> getGroups() {
 		return groups;
 	}
-	public List<Integer> getGroups(int i){
+	public List<Square> getGroups(int i){
 		return groups.get(i);
 	}
 
-	public List<List<Integer>> getRows() {
+	public List<List<Square>> getRows() {
 		return rows;
 	}
-	public List<Integer> getRows(int i){
+	public List<Square> getRows(int i){
 		return rows.get(i);
 	}
 
