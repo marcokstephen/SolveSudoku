@@ -49,4 +49,9 @@ public class Square{
 			}
 			return retval;
 		}
+		
+		@Override
+		public String toString(){
+			return "" + this.value;
+		}
 	}

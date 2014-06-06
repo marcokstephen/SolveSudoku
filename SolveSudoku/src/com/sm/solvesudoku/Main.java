@@ -70,45 +70,47 @@ public class Main {
 		for (int p = 0; p < BOARDSIZE; p++){
 			Square tempsquare = gameboard.getSquarearray()[p];
 			if (!tempsquare.isAssigned()){
+				System.out.println(p + ": " + tempsquare.getPossible());
+			}
+			if (!tempsquare.isAssigned()){
+				//System.out.println("BEFORE: " + p + ": " + tempsquare.getPossible());
 				List<Integer> possibleList = tempsquare.getPossible();
 				int numberOfPossible = possibleList.size();
 				int rowNumber = p/9;
-				int columnNumber = p%9;
-				//int groupNumber = Board.getGroupNumber(p);
 				
 				List<Square> row = gameboard.getRows(rowNumber);
-				for (int r = 0; r < 10; r++){
-					int numberUnassigned = 1;
-					List<Integer> valuesUnassigned = new ArrayList<Integer>();
-					//System.out.println((row.get(r).isAssigned()) + " " + (p == rowNumber*9+r));
+				int numberUnassigned = 1;
+				List<Integer> valuesUnassigned = new ArrayList<Integer>();
+				for (int r = 0; r < 9; r++){
 					if ((!row.get(r).isAssigned()) && (p != rowNumber*9+r)){
 						numberUnassigned++;
 						valuesUnassigned.add(r);
 					}
-					if (numberUnassigned > numberOfPossible){
-						boolean doNextStep = false;
+				}
+				if (numberUnassigned > numberOfPossible){
+					boolean doNextStep = false;
+					for (int listPosn = 0; listPosn < valuesUnassigned.size(); listPosn++){
+						int value = valuesUnassigned.get(listPosn);
+						if (possibleList.equals(row.get(value).getPossible())){
+							valuesUnassigned.remove(listPosn);
+							doNextStep = true;
+							break;
+						}
+					}
+					if (doNextStep){
 						for (int listPosn = 0; listPosn < valuesUnassigned.size(); listPosn++){
-							if (possibleList.equals(row.get(listPosn).getPossible())){
-								valuesUnassigned.remove(listPosn);
-								doNextStep = true;
-								break;
+							int value = valuesUnassigned.get(listPosn);
+							List<Integer> tempPossibleList = row.get(value).getPossible();
+							for (int possPosn = 0; possPosn < possibleList.size(); possPosn++){
+								tempPossibleList.remove(new Integer(possibleList.get(possPosn)));
 							}
 						}
-						if (doNextStep){
-							for (int listPosn = 0; listPosn < valuesUnassigned.size(); listPosn++){
-								List<Integer> tempPossibleList = row.get(listPosn).getPossible();
-								for (int possPosn = 0; possPosn < possibleList.size(); possPosn++){
-									tempPossibleList.remove(possibleList.get(possPosn));
-								}
-							}
-						}
-					} else {
-						break; //quits the for loop for 0 <= r < 10
 					}
 				}
-				
-			}//end if isAssigned. nothing needs to be done if it is already assigned
-		}
+				//System.out.println("AFTER: " + p + ": " + tempsquare.getPossible());
+			}
+		}//end for loop
+	
 		
 		if (!solved){
 			System.out.println("Cant do it...");
