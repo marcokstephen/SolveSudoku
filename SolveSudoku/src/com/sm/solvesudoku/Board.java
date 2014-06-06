@@ -16,8 +16,13 @@ public class Board{
 		List<List<Square>> groups = new ArrayList<List<Square>>();
 		List<List<Square>> rows = new ArrayList<List<Square>>();
 		
+		//for each square in the board, categoriezes the square
+		//according to the group/column/row that the square is in
+		//these different groupings are used to rule out possible
+		//values that a square might be
 		for (int i = 0; i < squarearray.length; i++){
 			Square tempsquare = squarearray[i];
+
 			int rowNumber = i/9;
 			if (rows.size() <= rowNumber){
 				List<Square> rowList = new ArrayList<Square>();
@@ -54,6 +59,8 @@ public class Board{
 		this.rows = rows;
 	}
 	
+	//this method finds the group number that a square
+	//on the gameboard is assigned to
 	public static int getGroupNumber(int i){
 		int rowNumber = i/9;
 		int columnNumber = i%9;
@@ -86,6 +93,9 @@ public class Board{
 		return groupNumber;
 	}
 	
+	//this method is the opposite of getGroupNumber
+	//converts the group number and position within the
+	//group to the square number on the entire gameboard
 	public static int groupPosnToIndex(int group, int posn){
 		int starting = 0;
 		if (group == 0){
@@ -116,7 +126,6 @@ public class Board{
 		return position;
 	}
 
-
 	public List<List<Square>> getColumns() {
 		return columns;
 	}
@@ -130,7 +139,6 @@ public class Board{
 	public List<Square> getGroups(int i){
 		return groups.get(i);
 	}
-
 	public List<List<Square>> getRows() {
 		return rows;
 	}

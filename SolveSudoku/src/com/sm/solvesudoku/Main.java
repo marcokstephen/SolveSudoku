@@ -112,12 +112,12 @@ public class Main {
 				int rowNumber = i/9;
 				int columnNumber = i%9;
 				List<Integer> possibleList = temp.getPossible();
-				List<Integer> group = gameboard.getGroups(groupNumber);
-				List<Integer> row = gameboard.getRows(rowNumber);
-				List<Integer> column = gameboard.getColumns(columnNumber);
+				List<Square> group = gameboard.getGroups(groupNumber);
+				List<Square> row = gameboard.getRows(rowNumber);
+				List<Square> column = gameboard.getColumns(columnNumber);
 
 				for (int m = 1; m < 10; m++){
-					if (!(group.contains(m) || row.contains(m) || column.contains(m))){
+					if (!(group.contains(new Square(m)) || row.contains(new Square(m)) || column.contains(new Square(m)))){
 						possibleList.add(m);
 					}
 				}
@@ -146,12 +146,12 @@ public class Main {
 				int rowNumber = i/9;
 				int columnNumber = i%9;
 				List<Integer> possibleList = temp.getPossible();
-				List<Integer> group = gameboard.getGroups(groupNumber);
-				List<Integer> row = gameboard.getRows(rowNumber);
-				List<Integer> column = gameboard.getColumns(columnNumber);
+				List<Square> group = gameboard.getGroups(groupNumber);
+				List<Square> row = gameboard.getRows(rowNumber);
+				List<Square> column = gameboard.getColumns(columnNumber);
 
 				for (int m = 1; m < 10; m++){
-					if (!(group.contains(m) || row.contains(m) || column.contains(m))){
+					if (!(group.contains(new Square(m)) || row.contains(new Square(m)) || column.contains(new Square(m)))){
 						possibleList.add(m);
 					}
 				}
@@ -176,12 +176,12 @@ public class Main {
 			Square temp = squarearray[i];
 			if (!temp.isAssigned()){
 				int rowNumber = i/9;
-				List<Integer> rowList = gameboard.getRows(rowNumber);
+				List<Square> rowList = gameboard.getRows(rowNumber);
 				List<Integer> possibleList = temp.getPossible();
 
 				List<Integer> joinedPossibleList = new ArrayList<Integer>();
 				for (int r = 0; r < 9; r++){
-					if (rowList.get(r) == 0 && (i != rowNumber*9+r)){
+					if (rowList.get(r).getValue() == 0 && (i != rowNumber*9+r)){
 						joinedPossibleList.addAll(squarearray[rowNumber*9+r].getPossible());
 					}
 				}
@@ -209,12 +209,12 @@ public class Main {
 			Square temp = squarearray[i];
 			if (!temp.isAssigned()){
 				int columnNumber = i%9;
-				List<Integer> columnList = gameboard.getColumns(columnNumber);
+				List<Square> columnList = gameboard.getColumns(columnNumber);
 				List<Integer> possibleList = temp.getPossible();
 
 				List<Integer> joinedPossibleList = new ArrayList<Integer>();
 				for (int c = 0; c < 9; c++){
-					if (columnList.get(c) == 0 && (i != c*9+columnNumber)){
+					if (columnList.get(c).getValue() == 0 && (i != c*9+columnNumber)){
 						joinedPossibleList.addAll(squarearray[c*9+columnNumber].getPossible());
 					}
 				}
@@ -242,13 +242,13 @@ public class Main {
 			Square temp = squarearray[i];
 			if (!temp.isAssigned()){
 				int groupNumber = Board.getGroupNumber(i);
-				List<Integer> groupList = gameboard.getGroups(groupNumber);
+				List<Square> groupList = gameboard.getGroups(groupNumber);
 				List<Integer> possibleList = temp.getPossible();
 				
 				List<Integer> joinedPossibleList = new ArrayList<Integer>();
 				for (int g = 0; g < 9; g++){
 					int index = Board.groupPosnToIndex(groupNumber, g);
-					if (groupList.get(g) == 0 && (i != index)){
+					if (groupList.get(g).getValue() == 0 && (i != index)){
 						joinedPossibleList.addAll(squarearray[index].getPossible());
 					}
 				}
@@ -268,6 +268,8 @@ public class Main {
 		return numberSolvedThisRound;
 	}
 
+	//prints the final board to console after all attempts have been
+	//made to solve the board
 	public static void printToString(Board gameboard){
 		Square[] squarearray = gameboard.getSquarearray();
 		String output = "";
@@ -278,6 +280,7 @@ public class Main {
 		int a = 0;
 		int b = 18;
 		for (int i = 0; i < 9; i++){
+			//splits the board up into 9 different lines of 9 numbers each
 			System.out.println(output.substring(a,b));
 			a += 18;
 			b += 18;
