@@ -63,6 +63,7 @@ public class Main {
 				System.exit(0);
 			}
 			checkNakedPairs(gameboard);
+			checkBoxLinePointing(gameboard);
 		}//end while
 		
 		if (!solved){
@@ -411,6 +412,11 @@ public class Main {
 			}
 		}
 		return count;
+	}
+	
+	//TODO:
+	public static void checkBoxLinePointing(Board gameboard){
+		
 	}
 
 	//prints the final board to console after all attempts have been
