@@ -125,6 +125,14 @@ public class Board{
 		
 		return position;
 	}
+	
+	public static int indexToGroupPosn(int index){
+		int rowNumber = index/9;
+		int columnNumber = index%9;
+		int groupRow = rowNumber%3;
+		int groupColumn = columnNumber%3;
+		return groupColumn + groupRow*3;
+	}
 
 	public List<List<Square>> getColumns() {
 		return columns;
