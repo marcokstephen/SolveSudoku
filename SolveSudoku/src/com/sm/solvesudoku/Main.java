@@ -414,9 +414,76 @@ public class Main {
 		return count;
 	}
 	
-	//TODO:
 	public static void checkBoxLinePointing(Board gameboard){
-		
+		Square[] squarearray = gameboard.getSquarearray();
+		for (int i = 0; i < BOARDSIZE; i++){
+			if (!squarearray[i].isAssigned()){
+				List<Integer> possibleList = squarearray[i].getPossible();
+				int groupNumber = Board.getGroupNumber(i);
+				int groupRow = (i/9)%3; //the row of the group that the element is on.
+				List<Square> groupSquares = gameboard.getGroups(groupNumber);
+				for (int m = 0; m < possibleList.size(); m++){
+					boolean isPresent = false;
+					int currentTest = possibleList.get(m);
+					for (int g = 0; g < groupSquares.size(); g++){
+						if (g/3 != groupRow && !groupSquares.get(g).isAssigned() &&
+								groupSquares.get(g).getPossible().contains(currentTest)){
+							isPresent = true;
+							break;
+						}
+					}
+					if (!isPresent){
+						removePossibilityFromRow(gameboard,i,currentTest);
+					}
+				}
+			}
+		}
+		for (int i = 0; i < BOARDSIZE; i++){
+			if (!squarearray[i].isAssigned()){
+				List<Integer> possibleList = squarearray[i].getPossible();
+				int groupNumber = Board.getGroupNumber(i);
+				int groupColumn = i%3;
+				List<Square> groupSquares = gameboard.getGroups(groupNumber);
+				for (int m = 0; m < possibleList.size(); m++){
+					boolean isPresent = false;
+					int currentTest = possibleList.get(m);
+					for (int g = 0; g < groupSquares.size(); g++){
+						if (g%3 != groupColumn && !groupSquares.get(g).isAssigned() &&
+								groupSquares.get(g).getPossible().contains(currentTest)){
+							isPresent = true;
+							break;
+						}
+					}
+					if (!isPresent){
+						removePossibilityFromColumn(gameboard,i,currentTest);
+					}
+				}
+			}
+		}
+	}
+	
+	public static void removePossibilityFromRow(Board gameboard, int index, int valueToRemove){
+		int rowNumber = index/9;
+		List<Square> rowSquares = gameboard.getRows(rowNumber);
+		int groupNumber = Board.getGroupNumber(index);
+		int tripletPair = groupNumber%3;
+		for (int r = 0; r < rowSquares.size(); r++){
+			if (r/3 != tripletPair && !rowSquares.get(r).isAssigned()){
+				rowSquares.get(r).getPossible().remove(new Integer(valueToRemove));
+			}
+		}
+	}
+	
+	public static void removePossibilityFromColumn(Board gameboard, int index, int valueToRemove){
+		int columnNumber = index%9;
+		List<Square> columnSquares = gameboard.getColumns(columnNumber);
+		int groupNumber = Board.getGroupNumber(index);
+		int tripletPair = groupNumber/3;
+		for (int c = 0; c < columnSquares.size(); c++){
+			if (c/3 != tripletPair && !columnSquares.get(c).isAssigned()){
+				columnSquares.get(c).getPossible().remove(new Integer(valueToRemove));
+			}
+		}
 	}
 
 	//prints the final board to console after all attempts have been
