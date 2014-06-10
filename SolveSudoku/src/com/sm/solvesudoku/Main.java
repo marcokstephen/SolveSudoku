@@ -9,11 +9,10 @@ public class Main {
 
 	public static void main(String[] args){
 		//TESTCASES:
-		//String boardstring = "003020600900305001001806400008102900700000008006708200002609500800203009005010300"; //easy, can solve
-		//String boardstring = "200080300060070084030500209000105408000000000402706000301007040720040060004010003"; //can solve
 		//String boardstring = "001640803704580010000000500065217900002000400009354120007000000040025701108096300"; //can solve http://www.websudoku.com/?level=1&set_id=1684315439
 		//String boardstring = "409050803006070190000000400080001600200090008004700030003000000047080900902040305"; //medium puzzle, can solve
-		String boardstring = "060090341090060000002701080610000200000000000009000014030207400000080050481050060"; //hard puzzle
+		String boardstring = "060090341090060000002701080610000200000000000009000014030207400000080050481050060"; //hard puzzle, can solve (needs advanced row tactics)
+		
 		Board gameboard = create_board(boardstring);
 		int numberUnsolved = generatePossibleList(gameboard);
 		int testResult = 0;
@@ -65,39 +64,48 @@ public class Main {
 				printToString(gameboard);
 				System.exit(0);
 			}
-		}//end while
-		
-		for (int p = 0; p < BOARDSIZE; p++){
-			Square tempsquare = gameboard.getSquarearray()[p];
-			if (!tempsquare.isAssigned()){
-				List<Integer> possibleList = tempsquare.getPossible();
-				int sizePossibleList = possibleList.size();
-				int rowNumber = p/9;
-				int columnNumber = p%9;
-				List<Square> rowSquares = gameboard.getRows(rowNumber);
-				int tempSimilarCount = 1;
-				for (int r = 0; r < rowSquares.size(); r++){
-					if (!rowSquares.get(r).isAssigned() && r != columnNumber){
-						List<Integer> tempPossible = rowSquares.get(r).getPossible();
-						if (possibleList.equals(tempPossible)){
-							tempSimilarCount++;
+			
+			//using more advanced elimination tactics for rows
+			for (int p = 0; p < BOARDSIZE; p++){
+				Square tempsquare = gameboard.getSquarearray()[p];
+				if (!tempsquare.isAssigned()){
+					List<Integer> possibleList = tempsquare.getPossible();
+					int sizePossibleList = possibleList.size();
+					int rowNumber = p/9;
+					int columnNumber = p%9;
+					List<Square> rowSquares = gameboard.getRows(rowNumber);
+					int tempSimilarCount = 1;
+					for (int r = 0; r < rowSquares.size(); r++){
+						if (!rowSquares.get(r).isAssigned() && r != columnNumber){
+							List<Integer> tempPossible = rowSquares.get(r).getPossible();
+							if (possibleList.equals(tempPossible)){
+								tempSimilarCount++;
+							}
+						}
+						if (tempSimilarCount == sizePossibleList){
+							int output = 0;
+							do {
+								output = filterRows(possibleList, rowSquares, columnNumber, r);
+								gameboard = refreshBoard(gameboard);
+							} while (output != 0);
+							break;
 						}
 					}
-					if (tempSimilarCount == sizePossibleList){
-						int output = 0;
-						do {
-							output = filterRows(possibleList, rowSquares, columnNumber, r);
-							gameboard = refreshBoard(gameboard);
-						} while (output != 0);
-						break;
-					}
 				}
+			}//end for loop
+			if (solved) {
+				printToString(gameboard);
+				System.exit(0);
 			}
-		}//end for loop
-		if (solved) {
-			printToString(gameboard);
-			System.exit(0);
-		}
+			
+			//TODO: using more advanced elimination tactics for columns
+/*			for (int p = 0; p < BOARDSIZE; p++){
+				Square tempsquare = gameboard.getSquarearray()[p];
+				if (!tempsquare.isAssigned()){
+					List<Integer> possibleList = tempsquare.getPossible();
+				}
+			}*/
+		}//end while
 		
 		if (!solved){
 			System.out.println("Cant do it...");
@@ -215,12 +223,7 @@ public class Main {
 						m--;
 					}
 				}
-
-/*				for (int m = 1; m < 10; m++){
-					if (!(group.contains(new Square(m)) || row.contains(new Square(m)) || column.contains(new Square(m)))){
-						possibleList.add(m);
-					}
-				}*/
+				
 				if (possibleList.size() == 1){
 					int value = possibleList.get(0);
 					temp.setAssigned(true);
