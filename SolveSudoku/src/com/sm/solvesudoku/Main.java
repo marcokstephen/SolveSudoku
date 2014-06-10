@@ -11,8 +11,8 @@ public class Main {
 		//TESTCASES:
 		//String boardstring = "001640803704580010000000500065217900002000400009354120007000000040025701108096300"; //can solve http://www.websudoku.com/?level=1&set_id=1684315439
 		//String boardstring = "409050803006070190000000400080001600200090008004700030003000000047080900902040305"; //medium puzzle, can solve
-		String boardstring = "060090341090060000002701080610000200000000000009000014030207400000080050481050060"; //hard puzzle, can solve (needs advanced row tactics)
-		//String boardstring = "100920000524010000000000070050008102000000000402700090060000000000030945000071006";
+		//String boardstring = "060090341090060000002701080610000200000000000009000014030207400000080050481050060"; //hard puzzle, can solve (needs advanced row tactics)
+		String boardstring = "100920000524010000000000070050008102000000000402700090060000000000030945000071006";
 		
 		Board gameboard = create_board(boardstring);
 		int numberUnsolved = generatePossibleList(gameboard);
@@ -76,17 +76,20 @@ public class Main {
 					int columnNumber = p%9;
 					List<Square> rowSquares = gameboard.getRows(rowNumber);
 					int tempSimilarCount = 1;
+					List<Integer> numsToIgnore = new ArrayList<Integer>();
+					numsToIgnore.add(columnNumber);
 					for (int r = 0; r < rowSquares.size(); r++){
 						if (!rowSquares.get(r).isAssigned() && r != columnNumber){
 							List<Integer> tempPossible = rowSquares.get(r).getPossible();
 							if (possibleList.equals(tempPossible)){
 								tempSimilarCount++;
+								numsToIgnore.add(r);
 							}
 						}
 						if (tempSimilarCount == sizePossibleList){
 							int output = 0;
 							do {
-								output = filterRows(possibleList, rowSquares, columnNumber, r);
+								output = filterRows(possibleList, rowSquares, numsToIgnore);
 								gameboard = refreshBoard(gameboard);
 							} while (output != 0);
 							break;
@@ -120,9 +123,9 @@ public class Main {
 		}
 	}
 	
-	public static int filterRows(List<Integer> possibleList, List<Square> rowSquares, int columnNumber, int r){
+	public static int filterRows(List<Integer> possibleList, List<Square> rowSquares, List<Integer> numsToIgnore){
 		for (int i = 0; i < rowSquares.size(); i++){
-			if (i != columnNumber && i != r && !rowSquares.get(i).isAssigned()){
+			if (!numsToIgnore.contains(i) && !rowSquares.get(i).isAssigned()){
 				List<Integer> tempPossible = rowSquares.get(i).getPossible();
 				for (int p = 0; p < possibleList.size(); p++){
 					int numToRemove = possibleList.get(p);
