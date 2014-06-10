@@ -67,11 +67,9 @@ public class Main {
 			}
 		}//end while
 		
-		for (int p = 0; p < 36; p++){
+		for (int p = 0; p < BOARDSIZE; p++){
 			Square tempsquare = gameboard.getSquarearray()[p];
 			if (!tempsquare.isAssigned()){
-				System.out.println(p + ": " + tempsquare.getPossible());
-				
 				List<Integer> possibleList = tempsquare.getPossible();
 				int sizePossibleList = possibleList.size();
 				int rowNumber = p/9;
@@ -89,27 +87,21 @@ public class Main {
 						int output = 0;
 						do {
 							output = filterRows(possibleList, rowSquares, columnNumber, r);
-							gameboard = new Board(gameboard.getSquarearray());
-							//refreshPossibleList(gameboard);
+							gameboard = refreshBoard(gameboard);
 						} while (output != 0);
 						break;
 					}
 				}
 			}
 		}//end for loop
-	
+		if (solved) {
+			printToString(gameboard);
+			System.exit(0);
+		}
 		
 		if (!solved){
 			System.out.println("Cant do it...");
 			printToString(gameboard);
-		}
-		
-		System.out.println("=========");
-		for (int p = 0; p < 36; p++){
-			Square tempsquare = gameboard.getSquarearray()[p];
-			if (!tempsquare.isAssigned()){
-				System.out.println(p + ": " + tempsquare.getPossible());
-			}
 		}
 	}
 	
@@ -202,12 +194,11 @@ public class Main {
 	}
 
 	public static int refreshPossibleList(Board gameboard){
-		int count = 0; 
+		int count = 0;
 		Square[] squarearray = gameboard.getSquarearray();
 
 		for (int i = 0; i < BOARDSIZE; i++){
 			Square temp = squarearray[i];
-			temp.setPossible(new ArrayList<Integer>());
 			if (!temp.isAssigned()){
 				int groupNumber = Board.getGroupNumber(i);
 				int rowNumber = i/9;
@@ -216,12 +207,20 @@ public class Main {
 				List<Square> group = gameboard.getGroups(groupNumber);
 				List<Square> row = gameboard.getRows(rowNumber);
 				List<Square> column = gameboard.getColumns(columnNumber);
+				
+				for (int m = 0; m < possibleList.size(); m++){
+					int possValue = possibleList.get(m);
+					if (group.contains(new Square(possValue)) || row.contains(new Square(possValue)) || column.contains(new Square(possValue))){
+						possibleList.remove(new Integer(possValue));
+						m--;
+					}
+				}
 
-				for (int m = 1; m < 10; m++){
+/*				for (int m = 1; m < 10; m++){
 					if (!(group.contains(new Square(m)) || row.contains(new Square(m)) || column.contains(new Square(m)))){
 						possibleList.add(m);
 					}
-				}
+				}*/
 				if (possibleList.size() == 1){
 					int value = possibleList.get(0);
 					temp.setAssigned(true);
