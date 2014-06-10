@@ -67,47 +67,34 @@ public class Main {
 			}
 		}//end while
 		
-		for (int p = 0; p < BOARDSIZE; p++){
+		for (int p = 0; p < 36; p++){
 			Square tempsquare = gameboard.getSquarearray()[p];
 			if (!tempsquare.isAssigned()){
 				System.out.println(p + ": " + tempsquare.getPossible());
-			}
-			if (!tempsquare.isAssigned()){
-				//System.out.println("BEFORE: " + p + ": " + tempsquare.getPossible());
-				List<Integer> possibleList = tempsquare.getPossible();
-				int numberOfPossible = possibleList.size();
-				int rowNumber = p/9;
 				
-				List<Square> row = gameboard.getRows(rowNumber);
-				int numberUnassigned = 1;
-				List<Integer> valuesUnassigned = new ArrayList<Integer>();
-				for (int r = 0; r < 9; r++){
-					if ((!row.get(r).isAssigned()) && (p != rowNumber*9+r)){
-						numberUnassigned++;
-						valuesUnassigned.add(r);
-					}
-				}
-				if (numberUnassigned > numberOfPossible){
-					boolean doNextStep = false;
-					for (int listPosn = 0; listPosn < valuesUnassigned.size(); listPosn++){
-						int value = valuesUnassigned.get(listPosn);
-						if (possibleList.equals(row.get(value).getPossible())){
-							valuesUnassigned.remove(listPosn);
-							doNextStep = true;
-							break;
+				List<Integer> possibleList = tempsquare.getPossible();
+				int sizePossibleList = possibleList.size();
+				int rowNumber = p/9;
+				int columnNumber = p%9;
+				List<Square> rowSquares = gameboard.getRows(rowNumber);
+				int tempSimilarCount = 1;
+				for (int r = 0; r < rowSquares.size(); r++){
+					if (!rowSquares.get(r).isAssigned() && r != columnNumber){
+						List<Integer> tempPossible = rowSquares.get(r).getPossible();
+						if (possibleList.equals(tempPossible)){
+							tempSimilarCount++;
 						}
 					}
-					if (doNextStep){
-						for (int listPosn = 0; listPosn < valuesUnassigned.size(); listPosn++){
-							int value = valuesUnassigned.get(listPosn);
-							List<Integer> tempPossibleList = row.get(value).getPossible();
-							for (int possPosn = 0; possPosn < possibleList.size(); possPosn++){
-								tempPossibleList.remove(new Integer(possibleList.get(possPosn)));
-							}
-						}
+					if (tempSimilarCount == sizePossibleList){
+						int output = 0;
+						do {
+							output = filterRows(possibleList, rowSquares, columnNumber, r);
+							gameboard = new Board(gameboard.getSquarearray());
+							//refreshPossibleList(gameboard);
+						} while (output != 0);
+						break;
 					}
 				}
-				//System.out.println("AFTER: " + p + ": " + tempsquare.getPossible());
 			}
 		}//end for loop
 	
@@ -116,6 +103,41 @@ public class Main {
 			System.out.println("Cant do it...");
 			printToString(gameboard);
 		}
+		
+		System.out.println("=========");
+		for (int p = 0; p < 36; p++){
+			Square tempsquare = gameboard.getSquarearray()[p];
+			if (!tempsquare.isAssigned()){
+				System.out.println(p + ": " + tempsquare.getPossible());
+			}
+		}
+	}
+	
+	public static int filterRows(List<Integer> possibleList, List<Square> rowSquares, int columnNumber, int r){
+		for (int i = 0; i < rowSquares.size(); i++){
+			if (i != columnNumber && i != r && !rowSquares.get(i).isAssigned()){
+				List<Integer> tempPossible = rowSquares.get(i).getPossible();
+				for (int p = 0; p < possibleList.size(); p++){
+					int numToRemove = possibleList.get(p);
+					tempPossible.remove(new Integer(numToRemove));
+				}
+			}
+		}
+		int count = 0;
+		for (int i = 0; i < rowSquares.size(); i++){
+			Square tempSquare = rowSquares.get(i);
+			if (!tempSquare.isAssigned()){
+				List<Integer> tempPossible = tempSquare.getPossible();
+				if (tempPossible.size() == 1){
+					tempSquare.setAssigned(true);
+					tempSquare.setValue(tempPossible.get(0));
+					List<Integer> nullList = new ArrayList<Integer>();
+					tempSquare.setPossible(nullList);
+					count++;
+				}
+			}
+		}
+		return count;
 	}
 
 	public static Board refreshBoard(Board board){
