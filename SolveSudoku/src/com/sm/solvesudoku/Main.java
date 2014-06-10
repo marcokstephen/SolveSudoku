@@ -11,7 +11,8 @@ public class Main {
 		//TESTCASES:
 		//String boardstring = "001640803704580010000000500065217900002000400009354120007000000040025701108096300"; //can solve http://www.websudoku.com/?level=1&set_id=1684315439
 		//String boardstring = "409050803006070190000000400080001600200090008004700030003000000047080900902040305"; //medium puzzle, can solve
-		String boardstring = "060090341090060000002701080610000200000000000009000014030207400000080050481050060"; //hard puzzle, can solve (needs advanced row tactics)
+		//String boardstring = "060090341090060000002701080610000200000000000009000014030207400000080050481050060"; //hard puzzle, can solve (needs advanced row tactics)
+		String boardstring = "100920000524010000000000070050008102000000000402700090060000000000030945000071006";
 		
 		Board gameboard = create_board(boardstring);
 		int numberUnsolved = generatePossibleList(gameboard);
@@ -110,6 +111,12 @@ public class Main {
 		if (!solved){
 			System.out.println("Cant do it...");
 			printToString(gameboard);
+			System.out.println("--------");
+			for (int i = 0; i < BOARDSIZE; i++){
+				if (!gameboard.getSquarearray()[i].isAssigned()){
+					System.out.println(i+": " + gameboard.getSquarearray()[i].getPossible());
+				}
+			}
 		}
 	}
 	
