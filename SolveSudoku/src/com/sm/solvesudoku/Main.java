@@ -202,7 +202,7 @@ public class Main {
 	}
 
 	public static int refreshPossibleList(Board gameboard){
-		int count = 0;
+		int count = 0; 
 		Square[] squarearray = gameboard.getSquarearray();
 
 		for (int i = 0; i < BOARDSIZE; i++){
