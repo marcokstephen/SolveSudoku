@@ -12,6 +12,53 @@ public class Main {
 		String boardstring = "043080250600000000000001094900004070000608000010200003820500000000000005034090710"; //euler, too hrad
 		//String boardstring = "000500080051000026000091000004600008009070400800005100000280000780000240030007000";
 		Board gameboard = create_board(boardstring);
+		//end while
+		
+		gameboard = attemptSolve(gameboard);
+		
+		
+		Board backtrackBoard = new Board(gameboard.getSquarearray());
+		
+		Square[] sqarray = gameboard.getSquarearray();
+		for (int i = 0; i < BOARDSIZE; i++){
+			Square sq = sqarray[i];
+			if (!sq.isAssigned()){
+				sq.setAssigned(true);
+				for (int m = 0; m < sq.getPossible().size(); m++){
+					sq.setValue(sq.getPossible().get(m));
+					attemptSolve(gameboard);
+				}
+				sq.setAssigned(false);
+			}
+		}
+		
+		
+		if (!solved){
+			System.out.println("Cant do it...");
+			printToString(gameboard);
+			System.out.println("--------");
+			for (int i = 0; i < BOARDSIZE; i++){
+				if (!gameboard.getSquarearray()[i].isAssigned()){
+					System.out.println(i+": " + gameboard.getSquarearray()[i].getPossible());
+				}
+			}
+		}
+	}
+	
+	public static boolean brokenBoard(Board gameboard){
+		Square[] sqarray = gameboard.getSquarearray();
+		for (int i = 0; i < BOARDSIZE; i++){
+			Square sq = sqarray[i];
+			if (!sq.isAssigned()){
+				if (sq.getPossible().size() == 0){
+					return true;
+				}
+			}
+		}
+		return false; //0 = solved, 1 = unsolved, 2 = broken
+	}
+
+	public static Board attemptSolve(Board gameboard){
 		int numberUnsolved = generatePossibleList(gameboard);
 		int testResult = 0;
 		while (testResult != numberUnsolved){
@@ -64,18 +111,8 @@ public class Main {
 			}
 			checkNakedPairs(gameboard);
 			checkBoxLinePointing(gameboard);
-		}//end while
-		
-		if (!solved){
-			System.out.println("Cant do it...");
-			printToString(gameboard);
-			System.out.println("--------");
-			for (int i = 0; i < BOARDSIZE; i++){
-				if (!gameboard.getSquarearray()[i].isAssigned()){
-					System.out.println(i+": " + gameboard.getSquarearray()[i].getPossible());
-				}
-			}
 		}
+		return gameboard;
 	}
 	
 	public static Board refreshBoard(Board board){
